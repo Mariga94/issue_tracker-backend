@@ -10,7 +10,9 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
   personalInfo: string;
-  workspaces: string[];
+  workspaces: Schema.Types.ObjectId[];
+  projects: Schema.Types.ObjectId[];
+  issues: Schema.Types.ObjectId[];
 }
 
 // Define the User schema
@@ -23,7 +25,9 @@ const userSchema = new Schema<IUser>({
   personalInfo: { type: String, required: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  workspaces: [{ type: Schema.Types.ObjectId, ref: 'Workspace' }]
+  workspaces: [{ type: Schema.Types.ObjectId, ref: 'Workspace' }],
+  projects: [{ type: Schema.Types.ObjectId, ref: 'Project', }],
+  issues: [{ type: Schema.Types.ObjectId, ref: 'Issue' }]
 });
 
 const UserModel = model<IUser>("User", userSchema);
