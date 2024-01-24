@@ -5,8 +5,8 @@ import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import authRoutes from './routes/v1/authRoutes';
-import propertyRoutes from './routes/v1/propertyRoutes';
 import userRoutes from './routes/v1/userRoutes';
+import workspaceRoutes from "./routes/v1/workspaceRoutes";
 import { swaggerUi, specs } from './swagger'
 import authenticateAPIKey from './middlewares/authenticateApiKey';
 import loggerMiddleware from './middlewares/loggerMiddleware'
@@ -66,8 +66,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs))
 
 // API routes setup
 app.use('/api/auth', authRoutes);
-app.use('/api/property', propertyRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/workspaces', workspaceRoutes);
 
 // Default route for testin server conncetion.
 app.get('/', (req, res) => {

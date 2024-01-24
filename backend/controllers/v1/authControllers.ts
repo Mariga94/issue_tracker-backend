@@ -1,5 +1,6 @@
 import UserModel from '../../models/v1/userModel'
-import { Request, Response} from 'express';
+import { createWorkspace } from '../../services/v1/workspaceServices';
+import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -17,7 +18,7 @@ const signUp = async (req: Request, res: Response): Promise<any> => {
         const existingUser = await UserModel.findOne({ email });
 
         if (existingUser) {
-           return res.status(409).json({ error: 'User with this email already exists' })
+            return res.status(409).json({ error: 'User with this email already exists' })
         }
         // Hash password
         const saltRounds = 10;
@@ -26,6 +27,9 @@ const signUp = async (req: Request, res: Response): Promise<any> => {
         // create new User
         const newUser = new UserModel({ fullName, email, password: hashedPassword });
         await newUser.save();
+        const userNamePlusWorkspace = newUser.fullName + ' ' + 'private';
+        const newWorkspace = await createWorkspace(newUser._id, userNamePlusWorkspace)
+        await newWorkspace.save();
 
         return res.status(201).json({ message: "User registered successfully" })
     } catch (err: any) {
