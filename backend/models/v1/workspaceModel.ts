@@ -8,6 +8,7 @@ export interface IWorkspace extends Document {
     projects?: Schema.Types.ObjectId[];
     settings?: Schema.Types.ObjectId[];
     members?: Schema.Types.ObjectId[];
+    issues?: Schema.Types.ObjectId[];
 }
 
 
@@ -17,6 +18,7 @@ const workspaceSchema = new Schema<IWorkspace>({
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     goals: [{ type: Schema.Types.ObjectId, ref: 'Goal', required: false }],
     projects: [{ type: Schema.Types.ObjectId, ref: 'Project' }],
+    issues: [{ type: Schema.Types.ObjectId, ref: 'Issue' }],
     members: [{ type: Schema.Types.ObjectId, ref: 'User', required: true }]
 })
 
