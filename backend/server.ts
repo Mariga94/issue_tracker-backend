@@ -7,6 +7,7 @@ import cors from 'cors';
 import authRoutes from './routes/v1/authRoutes';
 import userRoutes from './routes/v1/userRoutes';
 import workspaceRoutes from "./routes/v1/workspaceRoutes";
+import ProjectRoutes from "./routes/v1/projectRoutes";
 import { swaggerUi, specs } from './swagger'
 import authenticateAPIKey from './middlewares/authenticateApiKey';
 import loggerMiddleware from './middlewares/loggerMiddleware'
@@ -68,6 +69,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs))
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/workspaces', workspaceRoutes);
+app.use('/api/workspaces', ProjectRoutes);
+
 
 // Default route for testin server conncetion.
 app.get('/', (req, res) => {
