@@ -8,6 +8,7 @@ import authRoutes from './routes/v1/authRoutes';
 import userRoutes from './routes/v1/userRoutes';
 import workspaceRoutes from "./routes/v1/workspaceRoutes";
 import ProjectRoutes from "./routes/v1/projectRoutes";
+import issueRoutes from "./routes/v1/issueRoutes";
 import { swaggerUi, specs } from './swagger'
 import authenticateAPIKey from './middlewares/authenticateApiKey';
 import loggerMiddleware from './middlewares/loggerMiddleware'
@@ -70,7 +71,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/workspaces', workspaceRoutes);
 app.use('/api/workspaces', ProjectRoutes);
-
+app.use('/api/workspaces', issueRoutes);
 
 // Default route for testin server conncetion.
 app.get('/', (req, res) => {
