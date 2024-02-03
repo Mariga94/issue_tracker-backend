@@ -8,6 +8,7 @@ router.post('/:workspaceId/projects/:projectId', authenticateUser, IssueControll
 router.get('/:workspaceId/projects/:projectId/issues', authenticateUser, IssueControllers.getIssues)
 router.get('/:workspaceId/projects/:projectId/issues/:issueId', authenticateUser, IssueControllers.getIssue)
 router.put('/:workspaceId/projects/:projectId/issues/:issueId', authenticateUser, IssueControllers.updateIssue)
-router.delete('/:workspaceId/projects/:projectId/issues/:issueId',authenticateUser, IssueControllers.deleteIssue)
+router.patch('/:workspaceId/projects/:projectId/issues/:issueId/status', authenticateUser, IssueControllers.updateStatus)
+router.delete('/:workspaceId/projects/:projectId/issues/:issueId', authenticateUser, IssueControllers.deleteIssue)
 
 export default router;

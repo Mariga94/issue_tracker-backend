@@ -112,3 +112,29 @@ export const deleteIssue = async (req: Request, res: Response) => {
         });
     }
 }
+
+
+export const updateStatus = async (req: AuthenticateRequest, res: Response) => {
+    try {
+        const userId: string | undefined = req.userId
+        if (userId === undefined) {
+            return res.status(400).json({
+                "error": "Bad request",
+                "message": "User is not authenticated. Please sign in"
+            })
+        }
+        const { status } = req.body
+        const { workspaceId, projectId, issueId } = req.params
+        const updatedIssue = await IssueServices.updateStatus(userId, workspaceId, projectId, issueId, status)
+        res.status(200).json({
+            "message": "Status update successfully",
+            "data": updatedIssue
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            "error": "Interval Server Error",
+            "message": "Something went wrong."
+        });
+    }
+}

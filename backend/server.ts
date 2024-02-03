@@ -9,6 +9,7 @@ import userRoutes from './routes/v1/userRoutes';
 import workspaceRoutes from "./routes/v1/workspaceRoutes";
 import ProjectRoutes from "./routes/v1/projectRoutes";
 import issueRoutes from "./routes/v1/issueRoutes";
+import commentRoutes from "./routes/v1/commentRoutes";
 import { swaggerUi, specs } from './swagger'
 import authenticateAPIKey from './middlewares/authenticateApiKey';
 import loggerMiddleware from './middlewares/loggerMiddleware'
@@ -16,6 +17,7 @@ import helmet from 'helmet';
 import connectToMongoDB from './config/database'
 import * as Sentry from "@sentry/node";
 import { ProfilingIntegration } from "@sentry/profiling-node";
+
 // Load environment variables from .env file
 dotenv.config();
 
@@ -45,7 +47,7 @@ if (process.env.NODE_ENV === 'development') {
     app.use(loggerMiddleware)
 }
 const allowedOrigins = [
-    ''
+    'http://localhost:3001'
 ]
 const corsOptions = {
     credentials: true,
@@ -72,6 +74,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/workspaces', workspaceRoutes);
 app.use('/api/workspaces', ProjectRoutes);
 app.use('/api/workspaces', issueRoutes);
+app.use('/api/workspaces', commentRoutes);
 
 // Default route for testin server conncetion.
 app.get('/', (req, res) => {

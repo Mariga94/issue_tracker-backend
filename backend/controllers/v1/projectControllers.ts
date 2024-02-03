@@ -43,10 +43,16 @@ export const createProject = async (req: AuthenticateRequest, res: Response) => 
 export const getProjects = async (req: AuthenticateRequest, res: Response) => {
     try {
         const { workspaceId } = req.params;
-        if (!workspaceId) {
+        const userId: string | undefined = req.userId;
+        if (userId === undefined) {
+            return res.status(400).json({
+                "error": "Bad request",
+                "message": "User is not authenticated. Please sign in"
+            })
+        } else if (!workspaceId) {
             return res.status(400).json({ "error": "Bad request", "message": "Invalid workspaceId " })
         }
-        const fetchedProjects = await ProjectServices.getProjects(workspaceId);
+        const fetchedProjects = await ProjectServices.getProjects(workspaceId, userId);
         res.status(200).json({ "message": "Projects fetched successfully", "data": fetchedProjects })
 
     } catch (error) {

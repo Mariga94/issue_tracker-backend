@@ -27,9 +27,10 @@ const issueSchema = new Schema<IIssue>({
     issueType: { type: String, enum: ["bug", "task", "new feature", "improvement"], default: 'task' },
     priority: { type: String, enum: ["high", "medium", "low"], default: 'medium' },
     reporter: { type: Schema.Types.ObjectId, ref: 'User', required: false },
-    assignee: { type: Schema.Types.ObjectId, ref: 'User', required: false },
+    assignee: { type: Schema.Types.Mixed, ref: 'User', required: false },
     attachment: [{ type: String, required: false }],
     dueDate: { type: Date, required: false },
+    status: { type: String, enum: ["todo", "in progress", "in review", "done"], default: 'todo' },
     createdAt: { type: Date, default: Date.now() },
     updatedAt: { type: Date, default: Date.now() }
 })

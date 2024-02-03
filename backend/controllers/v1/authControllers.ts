@@ -1,9 +1,13 @@
 import UserModel from '../../models/v1/userModel'
+import { IWorkspace } from '../../models/v1/workspaceModel';
 import { createWorkspace } from '../../services/v1/workspaceServices';
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
+interface PopulatedWorkspace {
+    workspaces: IWorkspace
+}
 
 const signUp = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -41,9 +45,8 @@ const signUp = async (req: Request, res: Response): Promise<any> => {
 
 const signIn = async (req: Request, res: Response): Promise<any> => {
     try {
-
         const { email, password } = req.body;
-        const user = await UserModel.findOne({ email });
+        const user = await UserModel.findOne({ email }).populate('workspaces')
 
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' })
@@ -60,19 +63,43 @@ const signIn = async (req: Request, res: Response): Promise<any> => {
                     },
                     process.env.JWT_KEY!
                 );
-                // const { email, _id, ...info } = user._doc;
-                return res
-                    .cookie("token", token, {
-                        httpOnly: true,
-                        sameSite: "none",
-                        secure: true,
-                    })
-                    .status(200)
-                    .send({
-                        email: user.toObject().email,
-                        _id: user.toObject()._id,
-                        fullName: user.toObject().fullName,
-                    });
+
+                if (user.firstSignIn) {
+                    await UserModel.findByIdAndUpdate(user._id, { firstSignIn: false });
+                    return res
+                        .cookie('token', token, {
+                            httpOnly: true,
+                            sameSite: 'none',
+                            secure: true
+                        })
+                        .status(200)
+                        .send(
+                            {
+                                email: user.toObject().email,
+                                _id: user.toObject()._id,
+                                fullName: user.toObject().fullName,
+                                workspaces: user.workspaces || [],
+                                firstWorkspaceRedirect: user.workspaces.length > 0 ?
+                                    `/workspace/${(user.toObject() as any).workspaces[0]._id}/dashboard` : null
+                            }
+                        )
+                }
+                else {
+                    // const { email, _id, ...info } = user._doc;
+                    return res
+                        .cookie("token", token, {
+                            httpOnly: true,
+                            sameSite: "none",
+                            secure: true,
+                        })
+                        .status(200)
+                        .send({
+                            email: user.toObject().email,
+                            _id: user.toObject()._id,
+                            fullName: user.toObject().fullName,
+                            workspaces: user.workspaces || [],
+                        });
+                }
             }
         }
     } catch (err: any) {

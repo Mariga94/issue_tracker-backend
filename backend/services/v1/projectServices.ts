@@ -26,13 +26,16 @@ export const createProject = async (userId: string, workspaceId: string, project
 
 }
 
-export const getProjects = async (workspaceId: string): Promise<IProject[] | null> => {
+export const getProjects = async (workspaceId: string, userId: string): Promise<IProject[] | null> => {
     try {
-        if (!Types.ObjectId.isValid(workspaceId)) {
+        if (!Types.ObjectId.isValid(workspaceId) || !Types.ObjectId.isValid(userId)) {
             throw new Error('Invalid workspaceId')
         }
-        console.log('workspaceId', workspaceId)
-        const fetchedProjects = await ProjectModel.find({ workspace: workspaceId });
+
+        const fetchedProjects = await ProjectModel.find({ workspace: workspaceId, owner: userId }).populate({
+            path: 'owner',
+            select: 'fullName'
+        })
         return fetchedProjects
     } catch (error) {
         console.log(error);

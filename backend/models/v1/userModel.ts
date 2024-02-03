@@ -9,6 +9,8 @@ export interface IUser extends Document {
   password: string;
   createdAt: Date;
   updatedAt: Date;
+  lastSignIn?: Date;
+  firstSignIn: boolean;
   personalInfo: string;
   workspaces: Schema.Types.ObjectId[];
   projects: Schema.Types.ObjectId[];
@@ -22,6 +24,8 @@ const userSchema = new Schema<IUser>({
   phoneNumber: { type: String, required: false },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  firstSignIn: { type: Boolean, default: true },
+  lastSignIn: { type: Date },
   personalInfo: { type: String, required: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

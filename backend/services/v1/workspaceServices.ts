@@ -19,9 +19,12 @@ export const createWorkspace = async (userId: string, workspaceName: string): Pr
     }
 }
 
-export const getWorkspaces = async (): Promise<IWorkspace[]> => {
+export const getWorkspaces = async (userId: string): Promise<IWorkspace[] | null> => {
     try {
-        const fetchedWorkspaces = await WorkspaceModel.find();
+        if (!Types.ObjectId.isValid(userId)) {
+            throw Error('userId is invalid!')
+        }
+        const fetchedWorkspaces = await WorkspaceModel.find({ owner: userId }).exec();
         return fetchedWorkspaces
     } catch (error) {
         throw new Error(`Error fetching workspaces ${error}`)
@@ -29,11 +32,11 @@ export const getWorkspaces = async (): Promise<IWorkspace[]> => {
 
 }
 
-export const getWorkspace = async (workspaceId: string): Promise<IWorkspace | null> => {
+export const getWorkspace = async (workspaceId: string, userId: string): Promise<IWorkspace | null> => {
     try {
         //Tests whether a Strng is of 12 bytes i.e. valid mongo id
-        if (!Types.ObjectId.isValid(workspaceId)) {
-            throw new Error(`Invalid workspaceId: ${workspaceId}`)
+        if (!Types.ObjectId.isValid(workspaceId) || !Types.ObjectId.isValid(userId)) {
+            throw new Error(`Invalid workspaceId: ${workspaceId} or Invalid userId :${userId}`)
         }
         const fetchWorkspace = await WorkspaceModel.findById(workspaceId);
         return fetchWorkspace

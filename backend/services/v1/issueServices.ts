@@ -42,7 +42,10 @@ export const getIssue = async (workspaceId: string, projectId: string, issueId: 
         if (!Types.ObjectId.isValid(workspaceId) || !Types.ObjectId.isValid(projectId)) {
             throw new Error("Invalid workspaceId or projectId")
         }
-        const fetchedIssue = await IssueModel.findOne({ workspace: workspaceId, project: projectId, _id: issueId });
+        const fetchedIssue = await IssueModel.findOne({ workspace: workspaceId, project: projectId, _id: issueId }).populate({
+            path: 'reporter',
+            select: 'fullName'
+        })
         return fetchedIssue
     } catch (error) {
         console.error(error);
@@ -71,10 +74,24 @@ export const deleteIssue = async (workspaceId: string, projectId: string, issueI
         const deletedIssue = await IssueModel.findOneAndDelete({ workspace: workspaceId, project: projectId, _id: issueId });
         const updatedProject = await ProjectModel.findByIdAndUpdate(projectId, { $pull: { issues: issueId } }, { new: true });
         const updatedWorkspace = await WorkspaceModel.findByIdAndUpdate(workspaceId, { $pull: { issues: issueId } }, { new: true });
-       
+
         return deletedIssue;
     } catch (error) {
         console.error(error);
         throw new Error(`Error getting issues: ${error}`)
+    }
+}
+
+export const updateStatus = async (userId: string, workspaceId: string, projectId: string, issueId: string, status: string) => {
+    try {
+        if (!Types.ObjectId.isValid(workspaceId) || !Types.ObjectId.isValid(projectId) || !Types.ObjectId.isValid(issueId)) {
+            throw new Error("Invalid workspaceId or projectId")
+        }
+
+        const updatedStatus = IssueModel.findOneAndUpdate({ workspace: workspaceId, project: projectId, _id: issueId }, { status: status }, { new: true })
+        return updatedStatus
+    } catch (error) {
+        console.error(error);
+        throw new Error(`Error update status: ${error}`)
     }
 }

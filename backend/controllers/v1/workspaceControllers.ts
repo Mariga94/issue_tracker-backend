@@ -24,26 +24,33 @@ export const createWorkspace = async (req: AuthenticatedRequest, res: Response) 
     }
 }
 
-export const getWorkspaces = async (req: Request, res: Response) => {
+export const getWorkspaces = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const workspaces = await workspaceServices.getWorkspaces();
+        const userId: string | undefined = req.userId;
+        if (userId === undefined) {
+            return res.status(401).json({ "error": "Bad Request", "message": 'User is not authenticated.Please sign in' })
+        }
+        const workspaces = await workspaceServices.getWorkspaces(userId);
         res.status(200).json({ "message": "Workspaces fetched successfully", "data": workspaces })
     } catch (error) {
         res.status(500).json({ "error": "Internal Server Error", message: "An unexpected error occured while processing the request" })
     }
 }
 
-export const getWorkspace = async (req: Request, res: Response) => {
+export const getWorkspace = async (req: AuthenticatedRequest, res: Response) => {
     try {
+        const userId: string | undefined = req.userId;
+        if (userId === undefined) {
+            return res.status(401).json({ "error": "Bad Request", "message": 'User is not authenticated.Please sign in' })
+        }
         const { workspaceId } = req.params;
-        console.log(req.params)
         if (!workspaceId) {
             res.status(400).json({
                 "error": "Bad request",
                 "messsage": "Invalid workspaceId"
             })
         }
-        const workspace = await workspaceServices.getWorkspace(workspaceId);
+        const workspace = await workspaceServices.getWorkspace(workspaceId, userId);
         res.status(200).json({
             "message": "Workspace fetched successfully",
             "data": workspace
@@ -59,7 +66,7 @@ export const getWorkspace = async (req: Request, res: Response) => {
 export const deleteWorkspace = async (req: Request, res: Response) => {
     try {
         const { workspaceId } = req.params;
-        console.log(workspaceId)
+      
         if (!workspaceId) {
             res.status(400).json({
                 "error": "Bad request",
