@@ -95,3 +95,17 @@ export const updateStatus = async (userId: string, workspaceId: string, projectI
         throw new Error(`Error update status: ${error}`)
     }
 }
+
+export const updatePriority = async (userId: string, workspaceId: string, projectId: string, issueId: string, priority: string) => {
+    try {
+        if (!Types.ObjectId.isValid(workspaceId) || !Types.ObjectId.isValid(projectId) || !Types.ObjectId.isValid(issueId)) {
+            throw new Error("Invalid workspaceId or projectId")
+        }
+
+        const updatedStatus = IssueModel.findOneAndUpdate({ workspace: workspaceId, project: projectId, _id: issueId }, { priority: priority }, { new: true })
+        return updatedStatus
+    } catch (error) {
+        console.error(error);
+        throw new Error(`Error update status: ${error}`)
+    }
+}

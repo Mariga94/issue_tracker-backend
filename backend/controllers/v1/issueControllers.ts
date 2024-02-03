@@ -138,3 +138,29 @@ export const updateStatus = async (req: AuthenticateRequest, res: Response) => {
         });
     }
 }
+
+export const updatePriority = async (req: AuthenticateRequest, res: Response) => {
+    try {
+        const userId: string | undefined = req.userId
+        if (userId === undefined) {
+            return res.status(400).json({
+                "error": "Bad request",
+                "message": "User is not authenticated. Please sign in"
+            })
+        }
+        const { priority } = req.body
+        const { workspaceId, projectId, issueId } = req.params
+        const updatedIssue = await IssueServices.updatePriority(userId, workspaceId, projectId, issueId, priority)
+        res.status(200).json({
+            "message": "Priority update successfully",
+            "data": updatedIssue
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            "error": "Interval Server Error",
+            "message": "Something went wrong."
+        });
+    }
+}
+
